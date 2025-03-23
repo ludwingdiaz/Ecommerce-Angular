@@ -1,0 +1,15 @@
+#card-element {
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  padding: 10px;
+  background-color: #fff;
+}
+
+#card-element.StripeElement--focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+#card-element.StripeElement--invalid {
+  border-color: #dc3545;
+}
