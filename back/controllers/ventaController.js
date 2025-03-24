@@ -5,7 +5,8 @@ const Venta = require("../models/venta");
 const Dventa = require("../models/dventa");
 const Producto = require("../models/producto");
 const Carrito = require("../models/carrito");
-const stripe = require("stripe")("sk_test_51Mk4kXCLIarqTSG4yKZ9Ji4NipgJb2oRf8f9dxEhNPCjq0I0uJVJs2RNp6ihRPOxOToe19qb3VSnbmX6MLUV59Rv004RCdHQFx");
+require("dotenv").config();
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const registro_compra_cliente = async function (req, res) {
     if (req.user) {

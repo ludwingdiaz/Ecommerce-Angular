@@ -1,5 +1,5 @@
 "use strict";
-
+require("dotenv").config();
 const express = require("express");
 var app = express();
 app.use(express.json());
@@ -11,14 +11,14 @@ var io = require('socket.io')(server, {
   cors: { origin: '*' }
 });
 
-io.on('connection',function(socket){
-  socket.on('delete-carrito',function(data){
-    io.emit('new-carrito',data);
+io.on('connection', function (socket) {
+  socket.on('delete-carrito', function (data) {
+    io.emit('new-carrito', data);
     console.log(data)
   });
 
-  socket.on('add-carrito-add',function(data){
-    io.emit('new-carrito-add',data);
+  socket.on('add-carrito-add', function (data) {
+    io.emit('new-carrito-add', data);
     console.log(data)
   });
 })
@@ -31,13 +31,10 @@ const carrito_Route = require("./routes/carrito");
 const venta_Route = require("./routes/venta");
 const dventa_Route = require("./routes/dventa");
 
-mongoose.connect(
-  "mongodb+srv://shester:shester@cluster0.rvdbz.mongodb.net/tienda",
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }
-);
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error: "));
