@@ -121,10 +121,11 @@ export class CarritoComponent implements OnInit {
         this.venta.detalles = this.dventa;
         this._clienteService.registro_compra_cliente(this.venta, this.token).subscribe(
           response => {
-            /*this._clienteService.enviar_correo_compra_cliente(response.venta._id, this.token).subscribe(
+            this.btn_load = false;
+            this._clienteService.enviar_correo_compra_cliente(response.venta._id, this.token).subscribe(
               () => this._router.navigate(['/']),
               error => console.error('Error enviando correo:', error)
-            );*/
+            );
           },
           error => console.error('Error registrando compra:', error)
         );
@@ -169,21 +170,37 @@ export class CarritoComponent implements OnInit {
 
       this._clienteService.registro_compra_cliente(this.venta, token).subscribe(
         response => {
-          // Una vez registrada la compra, mostramos el mensaje de éxito
-          iziToast.show({ title: 'Gracias por tu compra', message: 'Tu compra se realizó con éxito' });
-
-          // Redirigir al usuario a la home
-          this._router.navigate(['/']);
-
-          // Asegurarse de que el estado de carga se restablezca
           this.btn_load = false;
+
+          // Mostrar mensaje de éxito
+          iziToast.show({
+            title: 'Gracias por tu compra',
+            message: 'Tu compra se realizó con éxito'
+          });
+
+          // Enviar correo
+          this._clienteService.enviar_correo_compra_cliente(response.venta._id, this.token).subscribe(
+            () => {
+              // Redirigir solo después de enviar el correo
+              this._router.navigate(['/']);
+            },
+            error => {
+              console.error('Error enviando correo:', error);
+              // Igual redirigimos aunque falle el correo
+              this._router.navigate(['/']);
+            }
+          );
         },
         error => {
           console.error('Error registrando compra:', error);
-          iziToast.show({ title: 'Error', message: 'Error al registrar la compra' });
-          this.btn_load = false; // Restablecer el estado de carga
+          iziToast.show({
+            title: 'Error',
+            message: 'Error al registrar la compra'
+          });
+          this.btn_load = false;
         }
       );
+
     } catch (error) {
       console.error('Error en el proceso de pago:', error);
       iziToast.show({ title: 'Error', message: 'Ocurrió un error al procesar el pago: ' + error.message });

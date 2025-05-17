@@ -5,6 +5,14 @@ const Venta = require("../models/venta");
 const Dventa = require("../models/dventa");
 const Producto = require("../models/producto");
 const Carrito = require("../models/carrito");
+
+var fs = require('fs');
+var handlebars = require('handlebars');
+var ejs = require('ejs');
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
+var path = require('path');
+
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -100,4 +108,61 @@ function zfill(number, width) {
     }
 }
 
-module.exports = { registro_compra_cliente, createPaymentIntent, zfill };
+const enviar_correo_compra_cliente = async function (req, res) {
+
+    var id = req.params['id'];
+    var readHTMLFile = function (path, callback) {
+        fs.readFile(path, { encoding: 'utf-8' }, function (err, html) {
+            if (err) {
+                throw err;
+                callback(err);
+            }
+            else {
+                callback(null, html);
+            }
+        });
+    };
+
+    var transporter = nodemailer.createTransport(smtpTransport({
+        service: 'gmail',
+        host: 'smtp.gmail.com',
+        auth: {
+            user: 'faustinoludwin@gmail.com',
+            pass: 'pxxlwguauzqbpfkm'
+        }
+    }));
+
+    var venta = await Venta.findById({ _id: id }).populate('cliente');
+    var detalles = await Dventa.find({ venta: id }).populate('producto');
+
+    var cliente = venta.cliente.nombres + ' ' +venta.cliente.apellidos;
+    var _id = venta._id;
+    var fecha = new Date(venta.createdAt);
+    var data = detalles;
+    var subtotal = venta.subtotal;
+    var precio_envio= venta.envio_precio;
+
+    readHTMLFile(process.cwd() + '/mail.html', (err, html) => {
+
+        let rest_html = ejs.render(html, { data: data,cliente:cliente, _id: _id, fecha:fecha, subtotal: subtotal,precio_envio:precio_envio });
+
+        var template = handlebars.compile(rest_html);
+        var htmlToSend = template({ op: true });
+
+        var mailOptions = {
+            from: 'faustinoludwin@gmail.com',
+            to: venta.cliente.email,
+            subject: 'Gracias por tu compra, Mi Tienda',
+            html: htmlToSend
+        };
+        res.status(200).send({ data: true });
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (!error) {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+
+    });
+}
+
+module.exports = { registro_compra_cliente, createPaymentIntent, zfill,enviar_correo_compra_cliente };

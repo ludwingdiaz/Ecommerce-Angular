@@ -7,5 +7,5 @@ var auth = require("../middlewares/authenticate");
 
 api.post("/registro_compra_cliente", auth.auth, ventaController.registro_compra_cliente);
 api.post("/create-payment-intent", auth.auth, ventaController.createPaymentIntent); // Nueva ruta
-
+api.get('/enviar_correo_compra_cliente/:id', auth.auth, ventaController.enviar_correo_compra_cliente)
 module.exports = api;
