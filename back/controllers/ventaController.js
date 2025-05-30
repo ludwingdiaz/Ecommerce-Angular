@@ -111,11 +111,12 @@ function zfill(number, width) {
 const enviar_correo_compra_cliente = async function (req, res) {
 
     var id = req.params['id'];
+
     var readHTMLFile = function (path, callback) {
         fs.readFile(path, { encoding: 'utf-8' }, function (err, html) {
             if (err) {
-                throw err;
-                callback(err);
+                console.error('Error leyendo archivo HTML:', err);
+                return callback(err);
             }
             else {
                 callback(null, html);
@@ -132,37 +133,49 @@ const enviar_correo_compra_cliente = async function (req, res) {
         }
     }));
 
-    var venta = await Venta.findById({ _id: id }).populate('cliente');
-    var detalles = await Dventa.find({ venta: id }).populate('producto');
+    try {
+        var venta = await Venta.findById({ _id: id }).populate('cliente');
+        var detalles = await Dventa.find({ venta: id }).populate('producto');
 
-    var cliente = venta.cliente.nombres + ' ' +venta.cliente.apellidos;
-    var _id = venta._id;
-    var fecha = new Date(venta.createdAt);
-    var data = detalles;
-    var subtotal = venta.subtotal;
-    var precio_envio= venta.envio_precio;
+        var cliente = venta.cliente.nombres + ' ' + venta.cliente.apellidos;
+        var _id = venta._id;
+        var fecha = new Date(venta.createdAt);
+        var data = detalles;
+        var subtotal = venta.subtotal;
+        var precio_envio = venta.envio_precio;
 
-    readHTMLFile(process.cwd() + '/mail.html', (err, html) => {
-
-        let rest_html = ejs.render(html, { data: data,cliente:cliente, _id: _id, fecha:fecha, subtotal: subtotal,precio_envio:precio_envio });
-
-        var template = handlebars.compile(rest_html);
-        var htmlToSend = template({ op: true });
-
-        var mailOptions = {
-            from: 'faustinoludwin@gmail.com',
-            to: venta.cliente.email,
-            subject: 'Gracias por tu compra, Mi Tienda',
-            html: htmlToSend
-        };
-        res.status(200).send({ data: true });
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (!error) {
-                console.log('Email sent: ' + info.response);
+        readHTMLFile(process.cwd() + '/mail.html', (err, html) => {
+            if (err) {
+                return res.status(500).send({ message: 'Error leyendo plantilla de correo' });
             }
-        });
 
-    });
-}
+            let rest_html = ejs.render(html, { data: data, cliente: cliente, _id: _id, fecha: fecha, subtotal: subtotal, precio_envio: precio_envio, cupon: venta.cupon,descuento: venta.descuento,total_pagar: venta.total_pagar });
+
+            var template = handlebars.compile(rest_html);
+            var htmlToSend = template({ op: true });
+
+            var mailOptions = {
+                from: 'faustinoludwin@gmail.com',
+                to: venta.cliente.email,
+                subject: 'Gracias por tu compra, Mi Tienda',
+                html: htmlToSend
+            };
+
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.error('Error enviando correo:', error);
+                    return res.status(500).send({ message: 'Error enviando correo' });
+                } else {
+                    console.log('Email enviado: ' + info.response);
+                    return res.status(200).send({ data: true });
+                }
+            });
+
+        });
+    } catch (error) {
+        console.error('Error en el servidor:', error);
+        return res.status(500).send({ message: 'Error en el servidor' });
+    }
+};
 
 module.exports = { registro_compra_cliente, createPaymentIntent, zfill,enviar_correo_compra_cliente };
