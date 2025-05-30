@@ -15,6 +15,9 @@ declare var iziToast;
 })
 export class IndexProductoComponent implements OnInit {
 
+    public min_price: number | undefined; // Or null, depending on your logic
+  public max_price: number | undefined; // Or null
+
   public config_global: any = {};
   public filter_categoria = '';
   public productos: Array<any> = [];

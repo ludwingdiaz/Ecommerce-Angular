@@ -1,0 +1,485 @@
+/* Estilos generales del contenedor principal */
+.cs-page-wrapper {
+  padding-top: 30px; /* Espaciado superior */
+  padding-bottom: 30px; /* Espaciado inferior */
+  background-color: #f8f9fa; /* Un fondo ligeramente gris para un look moderno */
+  font-family: 'Inter', sans-serif; /* Fuente moderna y legible */
+}
+
+/* Breadcrumb personalizado */
+.breadcrumb-alt {
+  font-size: 0.9rem;
+}
+.breadcrumb-alt .breadcrumb-item a {
+  color: #6c757d;
+  transition: color 0.2s ease-in-out;
+}
+.breadcrumb-alt .breadcrumb-item a:hover {
+  color: #007bff; /* Color principal de Bootstrap */
+}
+.breadcrumb-alt .breadcrumb-item.active {
+  color: #343a40;
+  font-weight: 500;
+}
+
+/* Encabezados y texto general */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif; /* Fuentes más estilizadas para títulos */
+  font-weight: 600; /* Un poco más de peso */
+}
+
+p {
+  line-height: 1.6; /* Mejor legibilidad para el texto */
+  color: #495057;
+}
+
+/* Iconos (cxi-): Si no tienes la fuente "cxi-", considera usar Font Awesome o Bootstrap Icons.
+   Para que se vean estos, debes tener una fuente de iconos personalizada que los defina.
+   Ejemplo de cómo podrías definirlo si tuvieras la fuente:
+*/
+@font-face {
+  font-family: 'CustomIcons'; /* Cambia esto al nombre de tu fuente */
+  src: url('/assets/fonts/your-custom-icons.woff2') format('woff2'),
+       url('/assets/fonts/your-custom-icons.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="cxi-"], [class*=" cxi-"] {
+  font-family: 'CustomIcons' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Para navegadores con WebKit */
+  -webkit-font-smoothing: antialiased;
+  /* Para navegadores con Gecko */
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Aquí irían las definiciones individuales de cada icono si usas una fuente personalizada
+   .cxi-home:before { content: "\e900"; }
+   .cxi-star-filled:before { content: "\e901"; }
+   .cxi-hanger:before { content: "\e902"; }
+   .cxi-cart:before { content: "\e903"; }
+   .cxi-heart:before { content: "\e904"; }
+   .cxi-facebook:before { content: "\e905"; }
+   .cxi-twitter:before { content: "\e906"; }
+   .cxi-pinterest:before { content: "\e907"; }
+   .cxi-arrow-left:before { content: "\e908"; }
+   .cxi-arrow-right:before { content: "\e909"; }
+   .cxi-cross:before { content: "\e90A"; }
+*/
+
+
+/* Galería de Producto */
+.cs-product-gallery {
+  border-radius: 12px; /* Esquinas más redondeadas */
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada y suave */
+  background-color: #fff;
+  padding: 15px; /* Espaciado interno para un mejor visual */
+  border: 1px solid #e9ecef; /* Borde sutil */
+}
+
+.cs-gallery-item img {
+  width: 100%;
+  height: 450px; /* Altura fija para las imágenes principales */
+  object-fit: contain; /* O 'cover' si prefieres que la imagen cubra el espacio y se recorte */
+  border-radius: 8px; /* Esquinas redondeadas en las imágenes */
+  transition: transform 0.3s ease-in-out;
+}
+
+.cs-gallery-item:hover img {
+  transform: scale(1.02); /* Pequeño zoom al pasar el ratón */
+}
+
+.cs-gallery-caption {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 5px;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.cs-thumbnails {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  gap: 10px; /* Espacio entre miniaturas */
+}
+
+.cs-thumbnails button {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 3px; /* Pequeño padding para el borde */
+  cursor: pointer;
+  background: none;
+  transition: border-color 0.2s ease-in-out;
+  overflow: hidden; /* Para que la imagen redondee con el borde */
+}
+
+.cs-thumbnails button img {
+  width: 80px; /* Tamaño fijo para las miniaturas */
+  height: 80px;
+  object-fit: cover;
+  border-radius: 5px;
+  display: block;
+}
+
+.cs-thumbnails button:hover {
+  border-color: #007bff;
+}
+
+/* Rating de estrellas */
+.star-rating {
+  color: #e0e0e0; /* Color por defecto de las estrellas */
+  font-size: 1.3rem; /* Iconos un poco más grandes */
+}
+.star-rating .sr-star.active {
+  color: #ffc107; /* Amarillo para las estrellas activas */
+}
+
+/* Formularios y selectores */
+.form-group label {
+  font-weight: 500;
+  color: #343a40;
+}
+.custom-select {
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  height: auto;
+  min-height: 42px; /* Altura mínima para que se vea bien */
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.custom-select:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Botones */
+.btn {
+  border-radius: 8px; /* Botones más redondeados */
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+  transform: translateY(-2px); /* Pequeño efecto al pasar el ratón */
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.25);
+}
+.btn-outline-primary {
+  border-color: #007bff;
+  color: #007bff;
+}
+.btn-outline-primary:hover {
+  background-color: #007bff;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.1);
+}
+
+/* Badge de descuento */
+.badge-danger {
+  border-radius: 5px;
+  padding: 0.4em 0.8em;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+/* Acordeones (accordion-alt) */
+.accordion-alt .card {
+  border: none;
+  border-bottom: 1px solid #e9ecef;
+  background-color: transparent;
+}
+.accordion-alt .card-header {
+  background-color: white;
+  border-bottom: none;
+  padding: 0;
+}
+.accordion-alt .accordion-heading a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  text-decoration: none;
+  color: #343a40;
+  font-weight: 600;
+  transition: color 0.2s ease-in-out;
+}
+.accordion-alt .accordion-heading a:hover {
+  color: #007bff;
+}
+.accordion-alt .accordion-indicator {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease-in-out;
+}
+.accordion-alt .accordion-indicator::before,
+.accordion-alt .accordion-indicator::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 2px;
+  background-color: #6c757d;
+  transition: transform 0.2s ease-in-out;
+}
+.accordion-alt .accordion-indicator::before {
+  transform: translate(-50%, -50%);
+}
+.accordion-alt .accordion-indicator::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+.accordion-alt .accordion-heading a.collapsed .accordion-indicator::after {
+  transform: translate(-50%, -50%) rotate(0deg); /* La barra vertical desaparece al colapsar */
+}
+.accordion-alt .card-body {
+  padding-top: 0.5rem;
+  padding-bottom: 1.5rem;
+}
+
+/* Botones sociales (social-btn) */
+.social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px; /* Un poco más grandes */
+  height: 48px;
+  border-radius: 50%;
+  font-size: 1.4rem; /* Iconos más grandes */
+  transition: all 0.2s ease-in-out;
+}
+.sb-solid {
+  background-color: #e9ecef;
+  color: #495057;
+}
+.sb-solid:hover {
+  background-color: #007bff;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
+}
+
+/* Tarjetas de Producto (card-product) */
+.card-product {
+  border: none;
+  border-radius: 12px; /* Esquinas más redondeadas */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Sombra más pronunciada pero suave */
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: white;
+}
+
+.card-product:hover {
+  transform: translateY(-5px); /* Efecto de levitación al pasar el ratón */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.card-product-img {
+  position: relative;
+  height: 220px; /* Altura fija para las imágenes de las tarjetas */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f2f5; /* Fondo suave para el espacio de imagen */
+}
+
+.card-product-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Asegura que la imagen cubra el espacio sin recortar demasiado */
+  padding: 10px; /* Pequeño padding dentro del contenedor de la imagen */
+}
+
+.card-product-widgets-top,
+.card-product-widgets-bottom {
+  position: absolute;
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  justify-content: flex-end;
+  z-index: 10;
+}
+.card-product-widgets-top { top: 0; }
+.card-product-widgets-bottom { bottom: 0; }
+
+.btn-wishlist {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #dee2e6;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #6c757d;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+.btn-wishlist:hover {
+  background-color: #dc3545; /* Rojo para "deseos" */
+  color: white;
+  border-color: #dc3545;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(220, 53, 69, 0.2);
+}
+
+/* Carousel de productos recomendados (controles) */
+.tns-custom-controls button {
+  background: none;
+  border: 1px solid #ced4da;
+  padding: 10px 14px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.2s ease-in-out;
+  color: #495057;
+  font-size: 1.1rem;
+}
+.tns-custom-controls button:hover {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+.cs-controls-inverse button {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.8);
+}
+.cs-controls-inverse button:hover {
+  background-color: white;
+  color: #007bff;
+  border-color: white;
+}
+
+/* Pequeños ajustes para la paginación de ng-bootstrap */
+ngb-pagination .page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white; /* Texto blanco en el botón activo */
+}
+ngb-pagination .page-item .page-link {
+  color: #007bff;
+  border-radius: 5px; /* Bordes ligeramente redondeados */
+  margin: 0 2px;
+  transition: all 0.2s ease-in-out;
+}
+ngb-pagination .page-item .page-link:hover {
+  background-color: #e9ecef;
+}
+ngb-pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  background-color: #fff;
+  border-color: #dee2e6;
+  cursor: not-allowed;
+}
+
+
+/* Estilos para el modal de tallas */
+.modal-header .modal-title {
+  color: #343a40;
+  font-weight: 700;
+}
+.modal-header .close {
+  font-size: 1.5rem;
+  opacity: 0.7;
+  transition: opacity 0.2s ease-in-out;
+}
+.modal-header .close:hover {
+  opacity: 1;
+  color: #dc3545;
+}
+
+.modal-body .nav-tabs .nav-link {
+  color: #6c757d;
+  border: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+}
+.modal-body .nav-tabs .nav-link.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
+  background-color: transparent;
+}
+.modal-body .nav-tabs .nav-link:hover {
+  border-bottom-color: #007bff;
+  color: #007bff;
+}
+
+.modal-body .table-responsive {
+  border-radius: 8px;
+  overflow: hidden; /* Asegura que las esquinas redondeadas se apliquen a la tabla */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+.modal-body .table-striped tbody tr:nth-of-type(odd) {
+  background-color: #f8f9fa;
+}
+.modal-body .table th, .modal-body .table td {
+  padding: 0.75rem;
+  vertical-align: middle;
+  border-top: 1px solid #e9ecef;
+}
+.modal-body .table h4 {
+  background-color: #f0f2f5;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+  .cs-product-gallery {
+    max-width: 100% !important;
+    padding: 10px;
+  }
+  .cs-gallery-item img {
+    height: 300px; /* Reducir altura en móviles */
+  }
+  .cs-thumbnails button img {
+    width: 60px;
+    height: 60px;
+  }
+  .modal-dialog.modal-xl {
+    max-width: 95%; /* Ajustar el tamaño del modal en móviles */
+  }
+}
+
+@media (max-width: 575.98px) {
+  .cs-product-gallery {
+    padding: 5px;
+  }
+  .cs-gallery-item img {
+    height: 250px;
+  }
+  .cs-thumbnails {
+    flex-wrap: wrap; /* Permitir que las miniaturas se envuelvan */
+  }
+  .cs-thumbnails button {
+    margin: 5px;
+  }
+  .col-lg-3.col-md-4.col-sm-6.mb-4 {
+    flex: 0 0 100%; /* Una tarjeta por fila en pantallas muy pequeñas */
+    max-width: 100%;
+  }
+}
