@@ -105,36 +105,50 @@ export class CarritoComponent implements OnInit {
 
     this.get_direccion_principal();
 
-    paypal.Buttons({
-      style: { layout: 'horizontal' },
-      createOrder: (data, actions) => {
-        return actions.order.create({
-          purchase_units: [{
-            description: 'Pago en Mi Tienda',
-            amount: { currency_code: 'USD', value: this.subtotal }
-          }]
-        });
-      },
-      onApprove: async (data, actions) => {
-        const order = await actions.order.capture();
-        this.venta.transaccion = order.purchase_units[0].payments.captures[0].id;
-        this.venta.detalles = this.dventa;
-        this._clienteService.registro_compra_cliente(this.venta, this.token).subscribe(
-          response => {
-            this.btn_load = false;
-            this._clienteService.enviar_correo_compra_cliente(response.venta._id, this.token).subscribe(
-              () => this._router.navigate(['/']),
-              error => console.error('Error enviando correo:', error)
-            );
-          },
-          error => console.error('Error registrando compra:', error)
-        );
-      },
-      onError: (err) => {
-        console.error('Error en PayPal:', err);
-        iziToast.show({ title: 'Error', message: 'Error al procesar el pago con PayPal' });
-      }
-    }).render(this.paypalElement.nativeElement);
+   paypal.Buttons({
+  style: { layout: 'horizontal' },
+  createOrder: (data, actions) => {
+    return actions.order.create({
+      purchase_units: [{
+        description: 'Pago en Mi Tienda',
+        amount: {
+          currency_code: 'USD',
+          value: this.total_pagar.toFixed(2)
+        }
+      }]
+    });
+  },
+onApprove: async (data, actions) => {
+  const order = await actions.order.capture();
+
+  this.venta.transaccion = order.purchase_units[0].payments.captures[0].id;
+  this.venta.detalles = this.dventa;
+
+  // Ya tienes subtotal, descuento y total_pagar actualizados desde la función cacular_total()
+  // Solo asegúrate de asignarlos antes de enviar:
+  this.venta.subtotal = this.venta.subtotal;  // subtotal original
+  this.venta.descuento = this.descuento || 0;
+  this.venta.total_pagar = this.total_pagar;
+
+  this._clienteService.registro_compra_cliente(this.venta, this.token).subscribe(
+    response => {
+      this.btn_load = false;
+      this._clienteService.enviar_correo_compra_cliente(response.venta._id, this.token).subscribe(
+        () => this._router.navigate(['/']),
+        error => console.error('Error enviando correo:', error)
+      );
+    },
+    error => console.error('Error registrando compra:', error)
+  );
+},
+
+
+  onError: (err) => {
+    console.error('Error en PayPal:', err);
+    iziToast.show({ title: 'Error', message: 'Error al procesar el pago con PayPal' });
+  }
+}).render(this.paypalElement.nativeElement);
+
 
     // Eliminar Cleave si no se usa (ya que #card-element maneja todo)
     setTimeout(() => {
@@ -208,8 +222,6 @@ export class CarritoComponent implements OnInit {
     }
   }
 
-
-
   init_Data() {
     this._clienteService.obtener_carrito_cliente(this.idcliente, this.token).subscribe(
       response => {
@@ -274,43 +286,63 @@ export class CarritoComponent implements OnInit {
     );
   }
 
-  cacular_total(envio_titulo) {
-    this.total_pagar = parseInt(this.subtotal.toString()) + parseInt(this.precio_envio);
-    this.venta.subtotal = this.total_pagar;
-    this.venta.envio_precio = parseInt(this.precio_envio);
-    this.venta.envio_titulo = envio_titulo;
+cacular_total(envio_titulo) {
+  let subtotalNum = parseInt(this.subtotal.toString());
+  let envioNum = parseInt(this.precio_envio);
 
-    console.log(this.venta);
+  this.venta.subtotal = subtotalNum;              // Subtotal original sin envío ni descuento
+  this.venta.envio_precio = envioNum;
+  this.venta.envio_titulo = envio_titulo;
+
+  if (this.descuento && this.descuento > 0) {
+    this.total_pagar = subtotalNum + envioNum - this.descuento;
+  } else {
+    this.total_pagar = subtotalNum + envioNum;
   }
 
-  validar_cupon() {
-    if (this.venta.cupon) {
-      if (this.venta.cupon.toString().length <= 25) {
+  this.venta.descuento = this.descuento || 0;
 
-        this._clienteService.validar_cupon_admin(this.venta.cupon, this.token).subscribe(
-          response => {
-            if (response.data != undefined) {
-              this.error_cupon = '';
+  console.log('Subtotal original:', subtotalNum);
+  console.log('Envío:', envioNum);
+  console.log('Descuento aplicado:', this.descuento);
+  console.log('Total final a pagar:', this.total_pagar);
+}
 
-              if (response.data.tipo == 'Valor fijo') {
-                this.descuento = response.data.valor;
-                this.total_pagar = this.total_pagar - this.descuento;
-              } else if (response.data.tipo == 'Porcentaje') {
-                this.descuento = (this.total_pagar * response.data.valor) / 100;
-                this.total_pagar = this.total_pagar - this.descuento;
-              }
-            } else {
-              this.error_cupon = 'El cupon no se pudo canjear';
+validar_cupon() {
+  if (this.venta.cupon) {
+    if (this.venta.cupon.toString().length <= 25) {
+
+      this._clienteService.validar_cupon_admin(this.venta.cupon, this.token).subscribe(
+        response => {
+          if (response.data != undefined) {
+            this.error_cupon = '';
+
+            if (response.data.tipo == 'Valor fijo') {
+              this.descuento = response.data.valor;
+            } else if (response.data.tipo == 'Porcentaje') {
+              this.descuento = (this.subtotal * response.data.valor) / 100;
             }
+
+            // Actualizar el total con el descuento y el envío
+            this.cacular_total(this.venta.envio_titulo);
+
+            // Guardar el descuento en la venta para enviarlo después
+            this.venta.descuento = this.descuento;
+
+          } else {
+            this.error_cupon = 'El cupon no se pudo canjear';
+            this.descuento = 0;
+            this.cacular_total(this.venta.envio_titulo); // recalcula sin descuento
           }
-        );
-      } else {
-        this.error_cupon = 'El cupon debe ser menos de 25 caracteres';
-      }
+        }
+      );
     } else {
-      this.error_cupon = 'El cupon no es valido';
+      this.error_cupon = 'El cupon debe ser menos de 25 caracteres';
     }
+  } else {
+    this.error_cupon = 'El cupon no es valido';
   }
+}
 
   isCreditCardSelected(): boolean {
     const selectedPayment = document.querySelector('input[name="payment"]:checked') as HTMLInputElement;
